@@ -3,9 +3,14 @@ import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useLibraryProject } from "@/pages/library/library-context"
+import { getFirstDocPage } from "@/projects/docs-utils"
 
 export default function LibraryHomePage() {
   const { project } = useLibraryProject()
+  const firstDoc = getFirstDocPage(project.docs)
+  const docsHref = firstDoc
+    ? `/lib/${project.meta.slug}/docs/${firstDoc.group.slug}/${firstDoc.page.slug}`
+    : `/lib/${project.meta.slug}/docs`
 
   return (
     <article className="space-y-6">
@@ -28,11 +33,11 @@ export default function LibraryHomePage() {
           </Button>
         ) : null}
         <Button asChild variant="outline">
-          <Link to={`/lib/${project.meta.slug}/docs`}>Docs</Link>
+          <Link to={docsHref}>Docs</Link>
         </Button>
       </div>
       <p className="text-slate-600 dark:text-slate-400">
-        Use the left menu to browse docs and examples. The navigation is scoped to this library only.
+        Use the left menu to browse sections and pages. The navigation is scoped to this library only.
       </p>
     </article>
   )

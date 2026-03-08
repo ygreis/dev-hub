@@ -7,7 +7,7 @@ export const intlPhoneJsMeta: ProjectMeta = {
   ecosystem: "JavaScript",
   repositoryUrl: "https://github.com/ygreis/intl-phone-js",
   packageUrl: "https://www.npmjs.com/package/@intl-phone-js/core",
-  docsUrl: "/lib/intl-phone-js/docs",
+  docsUrl: "/lib/intl-phone-js-core/docs/overview/introduction-overview",
   status: "active",
   tags: ["headless", "phone", "validation", "state"],
 }

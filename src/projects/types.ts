@@ -1,3 +1,5 @@
+import type { ReactNode } from "react"
+
 export type ProjectStatus = "active" | "beta" | "planned"
 
 export type ProjectMeta = {
@@ -12,25 +14,25 @@ export type ProjectMeta = {
   tags: string[]
 }
 
-export type ProjectDocsSection = {
+export type ProjectDocPage = {
+  slug: string
   title: string
-  content: string
+}
+
+export type ProjectDocGroup = {
+  slug: string
+  title: string
+  pages: ProjectDocPage[]
 }
 
 export type ProjectDocs = {
-  summary: string
-  sections: ProjectDocsSection[]
+  groups: ProjectDocGroup[]
 }
 
-export type ProjectExample = {
-  id: string
-  title: string
-  description: string
-  code: string
-}
+export type ResolveProjectDocPage = (groupSlug: string, pageSlug: string) => ReactNode | null
 
 export type ProjectRecord = {
   meta: ProjectMeta
   docs: ProjectDocs
-  examples: ProjectExample[]
+  resolveDocPage: ResolveProjectDocPage
 }

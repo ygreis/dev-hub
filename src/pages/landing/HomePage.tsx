@@ -13,8 +13,8 @@ export default function HomePage() {
             Public portfolio and documentation hub for my libraries.
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-400">
-            One SPA with landing pages and dedicated library experiences. Each library gets its own route, docs area,
-            and examples section.
+            One SPA with landing pages and dedicated library experiences. Each library gets its own route and a
+            structured documentation area.
           </p>
           <Button asChild>
             <a href="#projects">Explore projects</a>
@@ -26,7 +26,7 @@ export default function HomePage() {
         <SectionTitle
           eyebrow="Projects"
           title="Libraries and active experiments"
-          description="Each card opens an isolated library area with navigation ready for docs and examples."
+          description="Each card opens an isolated library area with nested docs navigation and reusable snippets."
         />
         <div className="grid gap-4 md:grid-cols-2">
           {projectRegistry.map((project) => (

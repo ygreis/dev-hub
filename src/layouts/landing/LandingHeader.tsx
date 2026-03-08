@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 const navItems = [
   { to: "/", label: "Home" },
-  { to: "/quem-sou", label: "Quem sou" },
+  { to: "/about", label: "About" },
 ]
 
 export function LandingHeader() {

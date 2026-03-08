@@ -1,13 +1,13 @@
-import { intlPhoneJsDocs } from "@/projects/intl-phone-js-core/docs"
-import { intlPhoneJsExamples } from "@/projects/intl-phone-js-core/examples"
 import { intlPhoneJsMeta } from "@/projects/intl-phone-js-core/meta"
+import { intlPhoneJsNavigation } from "@/projects/intl-phone-js-core/navigation"
+import { resolveIntlPhoneJsDocPage } from "@/projects/intl-phone-js-core/pages/registry"
 import type { ProjectRecord } from "@/projects/types"
 
 export const projectRegistry: ProjectRecord[] = [
   {
     meta: intlPhoneJsMeta,
-    docs: intlPhoneJsDocs,
-    examples: intlPhoneJsExamples,
+    docs: intlPhoneJsNavigation,
+    resolveDocPage: resolveIntlPhoneJsDocPage,
   }
 ]
 

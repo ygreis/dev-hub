@@ -2,17 +2,17 @@ import { useMemo, useState } from "react"
 import { NavLink } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
-import { cn, slugify } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 import type { ProjectRecord } from "@/projects/types"
 
 type LibrarySidebarProps = {
   project: ProjectRecord
 }
 
-type MenuItem = {
+type MenuGroup = {
   label: string
   to: string
-  children?: Array<{ label: string; to: string }>
+  children: Array<{ label: string; to: string }>
 }
 
 const topLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -31,57 +31,69 @@ const childLinkClass = ({ isActive }: { isActive: boolean }) =>
       : "text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100",
   )
 
+function createDocPath(slug: string, groupSlug: string, pageSlug: string) {
+  return `/lib/${slug}/docs/${groupSlug}/${pageSlug}`
+}
+
 export function LibrarySidebar({ project }: LibrarySidebarProps) {
   const [search, setSearch] = useState("")
   const [isOpen, setIsOpen] = useState(false)
   const slug = project.meta.slug
 
-  const menuItems = useMemo<MenuItem[]>(
-    () => [
-      { label: "Overview", to: `/lib/${slug}` },
-      {
-        label: "Docs",
-        to: `/lib/${slug}/docs`,
-        children: project.docs.sections.map((section) => ({
-          label: section.title,
-          to: `/lib/${slug}/docs#${slugify(section.title)}`,
-        })),
-      },
-      {
-        label: "Examples",
-        to: `/lib/${slug}/examples`,
-        children: project.examples.map((example) => ({
-          label: example.title,
-          to: `/lib/${slug}/examples#${slugify(example.id)}`,
-        })),
-      },
-    ],
-    [project.docs.sections, project.examples, slug],
+  const menuGroups = useMemo<MenuGroup[]>(
+    () =>
+      project.docs.groups
+        .map((group) => {
+          const firstPage = group.pages[0]
+
+          if (!firstPage) {
+            return null
+          }
+
+          return {
+            label: group.title,
+            to: createDocPath(slug, group.slug, firstPage.slug),
+            children: group.pages.map((page) => ({
+              label: page.title,
+              to: createDocPath(slug, group.slug, page.slug),
+            })),
+          }
+        })
+        .filter((group): group is MenuGroup => group !== null),
+    [project.docs.groups, slug],
   )
 
   const filteredItems = useMemo(() => {
     const query = search.trim().toLowerCase()
+
     if (!query) {
-      return menuItems
+      return menuGroups
     }
 
-    return menuItems
-      .map((item) => {
-        const matchTop = item.label.toLowerCase().includes(query)
-        const matchedChildren = item.children?.filter((child) => child.label.toLowerCase().includes(query))
+    return menuGroups
+      .map((group) => {
+        const matchGroup = group.label.toLowerCase().includes(query)
+        const matchedChildren = group.children.filter((child) => child.label.toLowerCase().includes(query))
 
-        if (matchTop) {
-          return item
+        if (matchGroup) {
+          return group
         }
 
-        if (matchedChildren && matchedChildren.length > 0) {
-          return { ...item, children: matchedChildren }
+        if (matchedChildren.length > 0) {
+          return {
+            ...group,
+            children: matchedChildren,
+          }
         }
 
         return null
       })
-      .filter((item): item is MenuItem => item !== null)
-  }, [menuItems, search])
+      .filter((group): group is MenuGroup => group !== null)
+  }, [menuGroups, search])
+
+  function closeOnNavigate() {
+    setIsOpen(false)
+  }
 
   return (
     <aside className="h-fit space-y-3">
@@ -94,7 +106,7 @@ export function LibrarySidebar({ project }: LibrarySidebarProps) {
         onClick={() => setIsOpen((current) => !current)}
       >
         Library menu
-        <span aria-hidden="true">{isOpen ? "−" : "+"}</span>
+        <span aria-hidden="true">{isOpen ? "-" : "+"}</span>
       </Button>
 
       <div
@@ -118,25 +130,23 @@ export function LibrarySidebar({ project }: LibrarySidebarProps) {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500"
-            placeholder="Search docs or examples"
+            placeholder="Search sections"
           />
         </div>
 
-        <nav className="space-y-1" aria-label="Library navigation">
-          {filteredItems.map((item) => (
-            <div key={item.to} className="space-y-1">
-              <NavLink to={item.to} end={item.to.endsWith(slug)} className={topLinkClass}>
-                {item.label}
+        <nav className="space-y-2" aria-label="Library navigation">
+          {filteredItems.map((group) => (
+            <div key={group.label} className="space-y-1">
+              <NavLink to={group.to} className={topLinkClass} onClick={closeOnNavigate}>
+                {group.label}
               </NavLink>
-              {item.children && item.children.length > 0 ? (
-                <div className="ml-3 border-l border-slate-200 pl-3 dark:border-slate-700">
-                  {item.children.map((child) => (
-                    <NavLink key={child.to} to={child.to} className={childLinkClass}>
-                      {child.label}
-                    </NavLink>
-                  ))}
-                </div>
-              ) : null}
+              <div className="ml-3 border-l border-slate-200 pl-3 dark:border-slate-700">
+                {group.children.map((child) => (
+                  <NavLink key={child.to} to={child.to} className={childLinkClass} onClick={closeOnNavigate}>
+                    {child.label}
+                  </NavLink>
+                ))}
+              </div>
             </div>
           ))}
           {filteredItems.length === 0 ? (
