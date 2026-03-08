@@ -1,73 +1,81 @@
-# React + TypeScript + Vite
+# Dev Hub SPA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Public dev hub built as a single React SPA for portfolio landing pages and library-specific documentation.
 
-Currently, two official plugins are available:
+## URL strategy
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Home: `https://ygreis.github.io/dev-hub/`
+- Library home: `https://ygreis.github.io/dev-hub/lib/:slug`
+- Library docs: `https://ygreis.github.io/dev-hub/lib/:slug/docs`
+- Library examples: `https://ygreis.github.io/dev-hub/lib/:slug/examples`
 
-## React Compiler
+## Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Vite
+- React + TypeScript
+- React Router (`BrowserRouter`)
+- Tailwind CSS
+- shadcn/ui (Button, Card, Badge, Separator, Tabs)
+- ESLint + Prettier
 
-## Expanding the ESLint configuration
+## Project structure
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+src/
+  app/router/router.tsx
+  layouts/
+    landing/
+    library/
+  pages/
+    landing/
+    library/
+    misc/
+  components/ui/
+  projects/
+    registry.ts
+    intl-phone-js-core/
+  styles/globals.css
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Local development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
+
+## Scripts
+
+- `npm run dev` starts Vite dev server
+- `npm run build` runs TypeScript build and generates static output in `docs/`
+- `npm run preview` serves the production build locally
+- `npm run lint` runs ESLint
+- `npm run format` runs Prettier
+
+## Build and deploy
+
+- `vite.config.ts` uses:
+  - `base: "/dev-hub/"`
+  - `build.outDir = "docs"`
+- GitHub Actions workflow at `.github/workflows/deploy.yml`:
+  1. checkout
+  2. install dependencies
+  3. build
+  4. deploy `docs/` to GitHub Pages
+
+## SPA fallback for GitHub Pages
+
+This project uses BrowserRouter with clean URLs. To support direct access and refresh on nested routes, it includes:
+
+- `public/404.html` redirect script for unknown routes
+- route restoration script in `index.html`
+
+This keeps URLs without `#` while still working on GitHub Pages static hosting.
+
+## Accessibility and theming
+
+- Theme toggle is available in landing and library templates
+- Default theme follows the operating system preference
+- If OS preference cannot be detected, dark mode is used by default
+- Library sidebar is collapsible on mobile, supports keyboard navigation, nested items, and search
+- Pages include keyboard-friendly skip links to jump to main content
