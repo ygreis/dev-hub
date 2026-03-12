@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@intl-phone-js/core": "^0.7.0",
+    "@radix-ui/react-alert-dialog": "^1.1.15",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
@@ -22,7 +24,8 @@
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.1",
     "react-syntax-highlighter": "^16.1.1",
-    "tailwind-merge": "^3.5.0"
+    "tailwind-merge": "^3.5.0",
+    "usewatch-js": "^1.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
